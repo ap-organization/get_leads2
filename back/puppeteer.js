@@ -25,7 +25,7 @@ const scrollDownPage = async (page) => {
     await new Promise((resolve, reject) => {
       try {
         let totalHeight = 0
-        const distance = 20
+        const distance = 200
         const timer = setInterval(() => {
           const scrollHeight = document.body.scrollHeight
           window.scrollBy(0, distance)

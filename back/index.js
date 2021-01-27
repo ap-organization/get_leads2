@@ -131,8 +131,22 @@ exports.peopleScrapper = async (req, res) => {
       let seeEmployeesUrl = `https://www.linkedin.com/sales/search/people/list/employees-for-account/${ids[i]}?doFetchHeroCard=false&geoIncluded=105015875&logHistory=true&page=1`
       await goOnUrl(page, seeEmployeesUrl)
       await waitForSeconds(5)
+      let nbPages = 1
       // get number of pages to click
-      const nbPages = 1
+      const pagination = await page.evaluate(() =>
+        Array.from(
+          document.querySelectorAll('.search-results__pagination'),
+            elem => elem.innerText
+          )
+      )
+      let paginationTab = pagination[0]
+      for (let j = 0; j <= paginationTab; j++) {
+        if (!isNaN(parseInt(paginationTab[j])) && parseInt(paginationTab[j]) > nbPages) {
+          nbPages = parseInt(paginationTab[j])
+        }
+      }
+      console.log(chalk.yellow('nbPages:'), nbPages)
+      //
       for (let j = 1; j <= nbPages; j++) {
         // scroll slowly (important)
         await scrollDownPage(page)
@@ -191,6 +205,12 @@ exports.peopleScrapper = async (req, res) => {
           }
         }
         await sheet.addRows(employees)
+        // go next page
+        await page.waitForSelector('button[aria-label="Accéder à la page 2"]')
+        await page.click('button[aria-label="Accéder à la page 2"]')
+        // document.querySelectorAll('.link-without-visited-statekeyword')
+        // const [submit_button] = await page.$x(`//button[contains(., '${'S’identifier'}')]`)
+        // await page.evaluateHandle(el => el.click(), submit_button)
       }
     }
   } catch (e) {
