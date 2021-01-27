@@ -9,7 +9,7 @@ const chalk = require('chalk')
  */
 const goOnUrl = async (page, url) => {
   console.log(chalk.cyan('--- goOnUrl'))
-  console.log(chalk.yellow('go to:', url.substring(0, 40), '...'))
+  console.log(chalk.yellow('go to:', url.substring(0, 60), '...'))
   await page.goto(url, { waitUntil: 'domcontentloaded' })
   await waitForSeconds(1)
 }
@@ -25,7 +25,7 @@ const scrollDownPage = async (page) => {
     await new Promise((resolve, reject) => {
       try {
         let totalHeight = 0
-        const distance = 200
+        const distance = 20
         const timer = setInterval(() => {
           const scrollHeight = document.body.scrollHeight
           window.scrollBy(0, distance)
