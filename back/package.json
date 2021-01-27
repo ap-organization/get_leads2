@@ -1,0 +1,24 @@
+{
+  "name": "back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint ./*.js --fix",
+    "localhost": "functions-framework --target=peopleScrapper",
+    "deploy": "gcloud functions deploy peopleScrapper --trigger-http --runtime=nodejs12 --memory=1024MB --region=europe-west1",
+    "start": "functions start && functions deploy --source=. peopleScrapper --trigger-http",
+    "test": "curl 'localhost:8080/'"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/functions-framework": "^1.7.1",
+    "chalk": "^4.1.0",
+    "google-spreadsheet": "^3.0.14",
+    "puppeteer": "^5.5.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.18.0"
+  }
+}
