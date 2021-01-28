@@ -9,7 +9,7 @@ const chalk = require('chalk')
  */
 const goOnUrl = async (page, url) => {
   console.log(chalk.cyan('--- goOnUrl'))
-  console.log(chalk.yellow('go to:', url.substring(0, 60), '...'))
+  console.log(chalk.yellow('go to:', url.substring(0, 100), '...'))
   await page.goto(url, { waitUntil: 'domcontentloaded' })
   await waitForSeconds(1)
 }

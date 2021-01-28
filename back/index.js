@@ -167,7 +167,13 @@ exports.peopleScrapper = async (req, res) => {
           elem => elem.innerText
         )
       )
-      let paginationTab = pagination[0].split('\n')
+      let paginationTab
+      try {
+        paginationTab = pagination[0].split('\n')
+      } catch (err) {
+        console.log('no employee')
+        continue
+      }
       for (let j = 0; j < paginationTab.length; j++) {
         // console.log('paginationTab j =', j, paginationTab[j])
         let potentialNumber = parseInt(paginationTab[j].replace(/[^0-9a-z-A-Z ]/g, '').replace(/ +/, ' '))
@@ -272,8 +278,20 @@ exports.peopleScrapper = async (req, res) => {
         await employeesSheet.addRows(employees)
         // go on next page
         if (j + 1 <= nbPages) {
+          let nextIsNa = true
+          let next_linkedin_sales_id
+          while (nextIsNa) {
+            next_linkedin_sales_id = inputsSheet.getCell(1 + id_row_offset + i, 6)
+            if (next_linkedin_sales_id.value == 'na') {
+              id_row_offset += 1
+            } else {
+              nextIsNa = false
+              // break
+            }
+          }
+          console.log('id_row_offset =', id_row_offset)
           let lastParsedPage = inputsSheet.getCell(1 + id_row_offset + i, 6 + 2)
-          lastParsedPage.value = (j)
+          lastParsedPage.value = j
           await inputsSheet.saveUpdatedCells()
           let submit_button = await page.$x(`//button[@aria-label="Accéder à la page ${j + 1}"]`)
           await page.evaluateHandle(el => el.click(), submit_button[0])
@@ -284,14 +302,17 @@ exports.peopleScrapper = async (req, res) => {
         } else {
           // go back to employees sheet
           let nextIsNa = true
+          let next_linkedin_sales_id
           while (nextIsNa) {
-            const next_linkedin_sales_id = inputsSheet.getCell(1 + id_row_offset + i, 6 + 2)
+            next_linkedin_sales_id = inputsSheet.getCell(1 + id_row_offset + i, 6)
             if (next_linkedin_sales_id.value == 'na') {
               id_row_offset += 1
             } else {
-              break
+              nextIsNa = false
+              // break
             }
           }
+          console.log('id_row_offset =', id_row_offset)
           let hasBeenScrapped = inputsSheet.getCell(1 + id_row_offset + i, 6 + 1)
           hasBeenScrapped.value = 'yes'
           // await rows[1 + i].save()
